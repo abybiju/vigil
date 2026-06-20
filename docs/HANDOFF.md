@@ -45,6 +45,18 @@ Robustness fix (2026-06-20): the first overnight v2 run hung indefinitely on a s
 client timeout). Added `REQUEST_TIMEOUT=60` + `MAX_RETRIES=3` to `get_client()` (`vigil/llm.py`,
 `vigil/config.py`). Re-ran to completion.
 
+## Shipped (2026-06-20): public repo + deploy-ready
+
+- **GitHub: https://github.com/abybiju/vigil** (public, 2 commits, no secrets — verified `.env`/`.db`
+  not on remote). `gh` authed as `abybiju`.
+- **Deploy-ready:** bundled `demo.db` (97 pre-processed cases) + `app.py` auto-fallback → the hosted
+  demo needs NO API key and has zero runtime cost (no model calls in the render path). `requirements.txt`
+  + `docs/DEPLOY.md` added.
+- **Vercel can't host Streamlit** (needs a long-running WebSocket server). Recommended host:
+  **Streamlit Community Cloud** — the only remaining step is the user's browser OAuth at
+  share.streamlit.io (repo `abybiju/vigil`, branch `main`, file `app.py`, no secrets). Alternatives
+  (HF Spaces / Render) in `docs/DEPLOY.md`.
+
 ## What's left (next session) — all optional polish; the MVP is demo-ready
 
 1. **Your own visual UI pass:** `make run` → walk Inbox → a clinical case (held + 3500A draft) → a
