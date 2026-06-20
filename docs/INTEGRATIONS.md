@@ -63,6 +63,40 @@ Observed routing on the bundled samples (live pipeline):
 A clinical/MDR case is **never** auto-answered, regardless of which platform it came from — the
 deterministic router is the safety boundary, not any per-integration logic.
 
+## Signature verification (HMAC)
+
+Each platform signs its payload with a shared secret; Vigil recomputes the HMAC over the **raw
+request bytes** and compares in constant time (`vigil/webhook_security.py`) **before** parsing or
+trusting anything. Real per-platform schemes:
+
+| Platform | Header | Signature |
+|---|---|---|
+| Shopify | `X-Shopify-Hmac-Sha256` | `base64(HMAC-SHA256(body, secret))` |
+| Zendesk | `X-Zendesk-Webhook-Signature` (+ `…-Timestamp`) | `base64(HMAC-SHA256(timestamp + body, secret))` |
+| Gorgias / email / generic | `X-Vigil-Signature` | `sha256=` + `hex(HMAC-SHA256(body, secret))` |
+
+**Posture** (set secrets via env):
+
+```bash
+VIGIL_WEBHOOK_SECRET_SHOPIFY=…      # enforces Shopify verification
+VIGIL_WEBHOOK_SECRET=…              # fallback secret for all platforms
+VIGIL_WEBHOOK_REQUIRE_SIGNATURE=true  # fail closed even with no secret (default: false)
+```
+
+- A secret **is** configured for the platform → signatures are **required and enforced** (a bad or
+  missing signature returns `401`).
+- No secret configured → verification is **skipped** (dev/demo) unless `…REQUIRE_SIGNATURE=true`.
+
+`GET /` reports `signature_enforced` per platform so you can confirm the posture at a glance. Sending
+a correctly-signed request (generic scheme):
+
+```bash
+SECRET=…; BODY=$(cat data/sample_webhooks/gorgias.json)
+SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$SECRET" -hex | sed 's/^.* //')
+curl -X POST localhost:8000/webhooks/gorgias -H 'Content-Type: application/json' \
+  -H "X-Vigil-Signature: sha256=$SIG" --data "$BODY"
+```
+
 ## Adding a new platform
 
 1. Write `from_<platform>(payload) -> raw_dict` in `vigil/adapters.py` (pure, tolerant of missing fields).
@@ -73,9 +107,13 @@ No pipeline changes. For a **real** connector you'd add the platform's webhook s
 (optionally) an outbound call to post the drafted reply back — left out of the MVP, which focuses on
 the detection + safe-routing core.
 
-## Production notes (out of MVP scope)
+## Production notes
 
-- **Webhook signature verification** per platform (HMAC) before trusting a payload.
+- **Webhook signature verification** per platform (HMAC) — **implemented** (see above); enforced once a
+  secret is configured.
+
+Still out of MVP scope:
+
 - **Idempotency / dedup** on platform message IDs (the MVP creates a fresh case per delivery; the
   model cache keeps re-deliveries cheap).
 - **Journey enrichment from Shopify** order data (fulfillment status → journey stage) is sketched in

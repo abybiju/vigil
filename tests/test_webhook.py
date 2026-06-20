@@ -106,3 +106,24 @@ def test_empty_text_422(tmp_path):
 
 def test_healthz():
     assert TestClient(app).get("/healthz").json() == {"status": "ok"}
+
+
+def test_signed_request_enforced(tmp_path, monkeypatch):
+    from vigil.webhook_security import sign_headers
+
+    monkeypatch.setenv("VIGIL_WEBHOOK_SECRET", "secret-123")
+    client, _ = _client(tmp_path, _fake_client(CLINICAL_TRIAGE, CLINICAL_SAFETY))
+    try:
+        body = json.dumps(_load("gorgias.json")).encode()
+
+        # Unsigned request is rejected once a secret is configured.
+        unsigned = client.post("/webhooks/gorgias", content=body, headers={"Content-Type": "application/json"})
+        assert unsigned.status_code == 401
+
+        # Correctly signed request is accepted and processed.
+        headers = {"Content-Type": "application/json", **sign_headers("gorgias", body, "secret-123")}
+        signed = client.post("/webhooks/gorgias", content=body, headers=headers)
+        assert signed.status_code == 200
+        assert signed.json()["held_for_human"] is True
+    finally:
+        _teardown()

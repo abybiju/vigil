@@ -93,8 +93,9 @@ curl -X POST localhost:8000/webhooks/gorgias -H 'Content-Type: application/json'
 Across the bundled samples the live pipeline routes a loose-tooth Gorgias ticket to `vigilance_review`
 (held), a Zendesk "where's my kit?" to a grounded `auto_send`, and — critically — an **email with a
 billing question that buries "is some gum bleeding normal?" to `clinical_review` (held)**. A
-clinical/MDR case is never auto-answered, whatever platform it arrives from. Details:
-[`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
+clinical/MDR case is never auto-answered, whatever platform it arrives from. Inbound payloads are
+verified with **per-platform HMAC signatures** (Shopify/Zendesk/generic schemes) over the raw request
+bytes before they're trusted. Details: [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
 
 ## The eval harness — the centerpiece
 
