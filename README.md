@@ -1,6 +1,10 @@
 # Vigil
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://abybiju-vigil-app-gv3tkv.streamlit.app)
+
 *Working codename — a complaint & adverse-event intake/triage layer for DTC clear-aligner support.*
+
+**🚀 Live demo:** https://abybiju-vigil-app-gv3tkv.streamlit.app
 
 Vigil turns an inbound support message into a **structured, review-ready medical-device complaint
 record + a safe routing decision** — catching messages that are legally complaints
