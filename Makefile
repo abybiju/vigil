@@ -1,8 +1,9 @@
 .PHONY: setup seed eval eval-fresh run test clean
 
-# Provision a Python 3.11 venv and install everything (incl. dev group for tests).
+# Provision a Python 3.13 venv and install everything (incl. dev group for tests).
+# 3.13 matches the hosted (Streamlit Cloud) runtime; the code runs on any 3.11+.
 setup:
-	uv venv --python 3.11
+	uv venv --python 3.13
 	uv sync
 
 # Initialise the SQLite DB, embed the FAQ corpus, load the labelled dataset.
