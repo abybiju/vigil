@@ -1,0 +1,17 @@
+[
+  {
+    "source": "email",
+    "journey_stage": "in_treatment",
+    "raw_text": "Hi, I'm Sarah. Order SML-48213. My tray feels really tight on day one — is that normal? You can reach me at sarah.j@example.com or 555-201-9987."
+  },
+  {
+    "source": "chat",
+    "journey_stage": "in_treatment",
+    "raw_text": "one of my bottom front teeth feels loose now after switching to step 6, kind of freaking out"
+  },
+  {
+    "source": "email",
+    "journey_stage": "pre_kit",
+    "raw_text": "Where is my impression kit? I ordered #100245 a week ago and tracking hasn't updated."
+  }
+]

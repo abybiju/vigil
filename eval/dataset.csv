@@ -1,0 +1,98 @@
+id,bucket,journey_stage,order_ref,text,gold_is_complaint,gold_clinical_red_flag,gold_potential_mdr,gold_severity,notes
+m001,B1_non_complaint,pre_kit,,"Hi, when will my impression kit arrive? I ordered a couple days ago.",false,false,false,none,tracking
+m002,B1_non_complaint,unknown,,Can I use two promo codes together at checkout?,false,false,false,none,discount
+m003,B1_non_complaint,unknown,,How long does treatment usually take on average?,false,false,false,none,how-it-works
+m004,B1_non_complaint,unknown,,Do you ship to Alaska and Hawaii?,false,false,false,none,shipping info
+m005,B1_non_complaint,unknown,,Whats the difference between the day and night aligner plans?,false,false,false,none,product info
+m006,B1_non_complaint,in_treatment,,Can I change the payment method on my monthly plan?,false,false,false,none,billing mechanics
+m007,B1_non_complaint,unknown,,Is there a student or military discount available?,false,false,false,none,discount
+m008,B1_non_complaint,post_impression,,How do I track my order once it ships?,false,false,false,none,tracking
+m009,B1_non_complaint,pre_kit,,What exactly is included in the impression kit?,false,false,false,none,"info, not a defect"
+m010,B1_non_complaint,unknown,,Do I need to see a dentist in person before starting?,false,false,false,none,process
+m011,B1_non_complaint,in_treatment,,Can I pause my monthly payments for one month?,false,false,false,none,billing
+m012,B1_non_complaint,post_impression,,When will I get my 3D treatment preview to approve?,false,false,false,none,process
+m013,B1_non_complaint,pre_kit,,Any tips for taking good impressions the first time?,false,false,false,none,how-to
+m014,B1_non_complaint,unknown,,Are retainers included after I finish treatment?,false,false,false,none,product info
+m015,B1_non_complaint,post_impression,,"My tracking shows delivery tomorrow, can I update the address?",false,false,false,none,logistics
+m016,B1_non_complaint,unknown,,How much does the night aligner plan cost?,false,false,false,none,pricing
+m017,B1_non_complaint,unknown,,Do you offer financing or a payment plan?,false,false,false,none,financing
+m018,B1_non_complaint,in_treatment,,How often am I supposed to switch to the next set of trays?,false,false,false,none,instructions
+m019,B1_non_complaint,unknown,,"I was double-charged on my card for one order, can you check?",false,false,false,none,"billing error, not a device complaint"
+m020,B1_non_complaint,unknown,,Can I order an extra storage case for travel?,false,false,false,none,upsell request
+m021,B2_complaint_non_clinical,pre_kit,,"My impression kit arrived with the putty already hardened, I cant use it.",true,false,false,none,quality defect
+m022,B2_complaint_non_clinical,post_impression,,The app keeps crashing every time I try to upload my impression photos.,true,false,false,none,app performance
+m023,B2_complaint_non_clinical,in_treatment,,"I got the wrong aligner step, the bag says step 9 but Im only on step 4.",true,false,false,none,fulfillment defect
+m024,B2_complaint_non_clinical,pre_kit,,One of the impression trays was missing from my kit.,true,false,false,none,missing part
+m025,B2_complaint_non_clinical,in_treatment,,My aligner storage case cracked in half after about a week.,true,false,false,none,"durability, accessory"
+m026,B2_complaint_non_clinical,preview_approved,,"My aligners arrived with a crack in one of the trays, right out of the package.",true,false,false,none,"device durability, no injury"
+m027,B2_complaint_non_clinical,pre_kit,,The kit shipped without the prepaid return mailer for my impressions.,true,false,false,none,missing part
+m028,B2_complaint_non_clinical,preview_approved,,I paid for both arches but only received upper aligners.,true,false,false,none,fulfillment
+m029,B2_complaint_non_clinical,post_treatment,,My retainer came with a visible scratch across the front.,true,false,false,none,cosmetic quality
+m030,B2_complaint_non_clinical,post_impression,,"The app wont let me log in, it says my account doesnt exist.",true,false,false,none,app performance
+m031,B2_complaint_non_clinical,in_treatment,,"These night aligners feel identical to the last step, like nothing changed.",true,false,false,none,"performance, no symptom"
+m032,B2_complaint_non_clinical,pre_kit,,The instruction guide in my kit was for a totally different product.,true,false,false,none,quality
+m033,B2_complaint_non_clinical,pre_kit,,The chewies that came with my kit are clearly the wrong size.,true,false,false,none,wrong accessory
+m034,B2_complaint_non_clinical,in_treatment,,My next set of trays never arrived even though the app says shipped.,true,false,false,none,fulfillment/quality complaint
+m035,B2_complaint_non_clinical,preview_approved,,"The treatment preview shows the wrong name and case, this isnt mine.",true,false,false,none,data/quality error
+m036,B2_complaint_non_clinical,pre_kit,,Half the putty packets in my kit were torn open and dried out.,true,false,false,none,quality defect
+m037,B2_complaint_non_clinical,in_treatment,,The print on my aligner pouch is smudged so I cant read the step number.,true,false,false,none,labeling quality
+m038,B2_complaint_non_clinical,post_treatment,,My retainer case latch broke the second day I had it.,true,false,false,none,accessory durability
+m039,B2_complaint_non_clinical,in_treatment,,"I was sent someone elses order, the packing slip has a different address.",true,false,false,none,fulfillment error
+m040,B3_clinical_non_serious,in_treatment,,"The new tray is rubbing a little sore spot on my gum, kind of annoying.",true,true,false,minor,minor soft tissue
+m041,B3_clinical_non_serious,in_treatment,,Theres a slightly rough edge on this aligner thats poking my cheek.,true,true,false,minor,"rough edge, minor"
+m042,B3_clinical_non_serious,in_treatment,,My gums feel a bit tender around the front teeth with this set.,true,true,false,minor,mild tenderness
+m043,B3_clinical_non_serious,in_treatment,,My teeth are a little more sore than I expected after switching yesterday.,true,true,false,minor,"mild pain, slightly beyond expected"
+m044,B3_clinical_non_serious,in_treatment,,One tooth feels a bit sensitive to cold since I started this step.,true,true,false,minor,mild sensitivity
+m045,B3_clinical_non_serious,in_treatment,,The aligner pinches my gum a little when I first seat it.,true,true,false,minor,minor pinch
+m046,B3_clinical_non_serious,in_treatment,,I get a mild ache in my jaw after wearing them a few hours.,true,true,false,minor,mild jaw ache
+m047,B3_clinical_non_serious,in_treatment,,Theres a little redness on my gum right where the tray edge sits.,true,true,false,minor,minor irritation
+m048,B3_clinical_non_serious,in_treatment,,"A small spot inside my lip feels raw from the tray, nothing bad.",true,true,false,minor,minor soft-tissue rub
+m049,B3_clinical_non_serious,in_treatment,,"My front teeth feel slightly tender when I press on them, mild.",true,true,false,minor,mild tenderness
+m050,B3_clinical_non_serious,in_treatment,,"This step makes my teeth ache a bit more than the last, still manageable.",true,true,false,minor,mild pain
+m051,B3_clinical_non_serious,in_treatment,,The tray feels really tight and a little uncomfortable on day one.,true,true,false,minor,tightness/discomfort
+m052,B3_clinical_non_serious,in_treatment,,"I have a tiny bit of gum soreness, like a mild rub, since the new trays.",true,true,false,minor,mild soreness
+m053,B3_clinical_non_serious,in_treatment,,My cheek is a little irritated where the aligner edge touches.,true,true,false,minor,minor irritation
+m054,B3_clinical_non_serious,in_treatment,,Slight sensitivity when I drink something cold with the new set in.,true,true,false,minor,mild sensitivity
+m055,B3_clinical_non_serious,in_treatment,,My gums are a touch sore but it eases after an hour or so.,true,true,false,minor,transient mild soreness
+m056,B3_clinical_non_serious,in_treatment,,"The bottom tray rubs the inside of my lip a little, minor annoyance.",true,true,false,minor,minor rub
+m057,B3_clinical_non_serious,in_treatment,,"Mild dull ache in a couple teeth after switching, not too bad.",true,true,false,minor,mild pain
+m058,B3_clinical_non_serious,in_treatment,,"I notice a little tenderness on the gum line, pretty mild though.",true,true,false,minor,mild tenderness
+m059,B4_clinical_serious,in_treatment,,"One of my bottom front teeth feels loose now after this step, Im worried.",true,true,true,serious,tooth mobility
+m060,B4_clinical_serious,in_treatment,,Ive had severe throbbing pain for three days and I cant eat on that side.,true,true,true,serious,severe persistent pain + dysfunction
+m061,B4_clinical_serious,in_treatment,,My gum is really swollen and puffy around a back tooth since wearing these.,true,true,true,serious,swelling
+m062,B4_clinical_serious,in_treatment,,My gums have started receding and I can see more of the tooth root now.,true,true,true,serious,gum recession
+m063,B4_clinical_serious,in_treatment,,"I think Im having an allergic reaction, my lips are swollen and itchy.",true,true,true,serious,"allergic reaction, systemic"
+m064,B4_clinical_serious,in_treatment,,"The tray edge cut my gum and its bleeding a lot, wont stop.",true,true,true,serious,laceration + bleeding
+m065,B4_clinical_serious,in_treatment,,My gums have been bleeding every day for over a week now.,true,true,true,serious,persistent bleeding
+m066,B4_clinical_serious,in_treatment,,"My bite feels totally off, my back teeth dont meet anymore.",true,true,true,serious,bite change/malocclusion
+m067,B4_clinical_serious,in_treatment,,Part of my lower lip feels numb and tingly since I started this set.,true,true,true,serious,numbness/paresthesia
+m068,B4_clinical_serious,in_treatment,,"Theres pus and a really bad taste coming from one tooth, and it aches.",true,true,true,serious,infection signs
+m069,B4_clinical_serious,in_treatment,,"Two of my teeth feel wobbly and one even shifted, this scares me.",true,true,true,serious,mobility
+m070,B4_clinical_serious,in_treatment,,My jaw is swollen on one side and it hurts to open my mouth.,true,true,true,serious,swelling + pain
+m071,B4_clinical_serious,in_treatment,,I broke out in hives on my face and my mouth is burning with these in.,true,true,true,serious,allergic reaction
+m072,B4_clinical_serious,in_treatment,,A tray cracked and a sharp piece sliced the inside of my cheek open.,true,true,true,serious,device malfunction + laceration
+m073,B4_clinical_serious,in_treatment,,The pain is so bad I havent slept in two nights and ibuprofen isnt helping.,true,true,true,serious,severe pain
+m074,B4_clinical_serious,in_treatment,,"One tooth has gone grey and really hurts, I think something is wrong.",true,true,true,serious,possible nerve damage
+m075,B4_clinical_serious,in_treatment,,"My gum is swollen, bleeding, and theres a lump that wasnt there before.",true,true,true,serious,swelling + bleeding + lesion
+m076,B4_clinical_serious,in_treatment,,"My front tooth feels like it could come out, it moves when I touch it.",true,true,true,serious,severe mobility
+m077,B4_clinical_serious,in_treatment,,Ever since this step my face is swollen and Im running a slight fever.,true,true,true,serious,swelling + systemic
+m078,B5_adversarial,in_treatment,,"While I have you, can you fix my autopay? Also one of my back teeth feels a bit loose now.",true,true,true,serious,buried red flag in billing
+m079,B5_adversarial,in_treatment,,"Its probably nothing and Im sure its fine, but my gum has been bleeding for a week.",true,true,true,serious,downplayed harm
+m080,B5_adversarial,in_treatment,,"love that my jaw clicks and locks up now lol, anyway when does my next set ship?",true,true,true,serious,sarcasm hiding bite/jaw issue
+m081,B5_adversarial,in_treatment,,I want a refund AND someone to explain why my face is swollen after wearing these.,true,true,true,serious,mixed billing + clinical
+m082,B5_adversarial,unknown,,"Honestly this price is killing me, can I get a discount?",false,false,false,none,"idiom, no real symptom"
+m083,B5_adversarial,unknown,,"My tooth is gonna fall out if I have to pay this bill lol, can you waive the late fee?",false,false,false,none,"idiom in billing, not clinical"
+m084,B5_adversarial,in_treatment,,"Just confirming the day-two pressure and mild soreness is normal, right? No big deal.",false,false,false,minor,"expected-soreness decoy, crf F"
+m085,B5_adversarial,in_treatment,,"Asking for my sister who uses these, her gum is really swollen and bleeding, what should she do?",true,true,true,serious,third-person serious red flag
+m086,B5_adversarial,in_treatment,,"Worst aligners ever, they hurt so bad I had to stop wearing them after a week.",true,true,true,serious,"venting review, severe pain"
+m087,B5_adversarial,in_treatment,,"My bite feels a little off lately, is that something to worry about?",true,true,false,moderate,"ambiguous bite change, question"
+m088,B5_adversarial,in_treatment,,"A tooth feels slightly loose but thats probably normal with aligners, right?",true,true,true,serious,downplayed mobility
+m089,B5_adversarial,in_treatment,,The aligners taste really weird and my mouth feels kind of funny and tingly.,true,true,true,serious,"possible reaction, ambiguous -> flag"
+m090,B5_adversarial,unknown,,"Your shipping is painfully slow and it makes me want to scream, where is my kit?",false,false,false,none,"emotional idiom, shipping only"
+m091,B5_adversarial,in_treatment,,"Quick billing question about my plan, oh and is some gum bleeding normal when I brush with them in?",true,true,true,serious,buried bleeding question
+m092,B5_adversarial,in_treatment,,My retainer cracked and also my gum has been swollen for a few days.,true,true,true,serious,device defect + clinical
+m093,B5_adversarial,in_treatment,,"Everything is basically fine, just FYI a front tooth feels loose, no rush at all.",true,true,true,serious,minimized serious mobility
+m094,B5_adversarial,in_treatment,,"great, now my gums bleed every single time I take these out, 10/10 experience.",true,true,true,serious,"sarcasm, real bleeding"
+m095,B5_adversarial,in_treatment,,"I think Im allergic, my lips feel tingly and a bit swollen, but maybe its nothing.",true,true,true,serious,downplayed allergic reaction
+m096,B5_adversarial,in_treatment,,Can I switch to night aligners? These day ones make my teeth ache way too much to function.,true,true,false,moderate,"request + notable pain, not clearly serious"
+m097,B5_adversarial,unknown,,"This whole process has been a headache, I just want to know my refund status.",false,false,false,none,"idiom headache, billing/status only"
