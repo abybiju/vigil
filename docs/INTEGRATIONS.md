@@ -97,6 +97,33 @@ curl -X POST localhost:8000/webhooks/gorgias -H 'Content-Type: application/json'
   -H "X-Vigil-Signature: sha256=$SIG" --data "$BODY"
 ```
 
+## Outbound — posting the triage back
+
+After triage, Vigil posts back to the originating ticket/order (`vigil/outbound.py`). **The human
+gate is enforced on the way out, too:** a held clinical/MDR case posts an internal alert note + tags
+and **never a public reply**.
+
+| Routing | Posted back |
+|---|---|
+| `clinical_review` / `vigilance_review` (held) | internal **note** (triage summary) + alert tags — *no reply* |
+| `agent_draft` | note + the drafted reply as an **internal** (agent-review) note + tags |
+| `auto_send` | note + grounded reply (public **only** if `VIGIL_OUTBOUND_ALLOW_AUTOSEND_PUBLIC=true`, never clinical) + tags |
+
+Tags applied: `vigil:triaged`, `vigil:<routing>`, and conditionally `vigil:complaint`,
+`vigil:clinical`, `vigil:mdr-candidate`, `vigil:held-for-review`.
+
+**Modes** (`VIGIL_OUTBOUND_MODE`): `dry_run` (default — records the intended action to `outbound_log`
+and the API response, no HTTP), `live` (calls the platform API with configured credentials), `off`.
+Dry-run makes the round trip fully demoable without any real credentials. Real per-platform calls:
+
+| Platform | Call |
+|---|---|
+| Zendesk | `PUT /api/v2/tickets/{id}.json` → `{ticket:{comment:{body,public}, tags}}` (Basic `email/token`) |
+| Shopify | `PUT /admin/api/{ver}/orders/{id}.json` → `{order:{note, tags}}` (`X-Shopify-Access-Token`) — note + tags only |
+| Gorgias | `POST /api/tickets/{id}/messages` (internal-note vs email) + `/tags` (Basic `email:api_key`) |
+
+Email/generic have no ticket to update, so outbound is skipped for them.
+
 ## Adding a new platform
 
 1. Write `from_<platform>(payload) -> raw_dict` in `vigil/adapters.py` (pure, tolerant of missing fields).

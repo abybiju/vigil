@@ -95,7 +95,9 @@ Across the bundled samples the live pipeline routes a loose-tooth Gorgias ticket
 billing question that buries "is some gum bleeding normal?" to `clinical_review` (held)**. A
 clinical/MDR case is never auto-answered, whatever platform it arrives from. Inbound payloads are
 verified with **per-platform HMAC signatures** (Shopify/Zendesk/generic schemes) over the raw request
-bytes before they're trusted. Details: [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
+bytes before they're trusted, and Vigil posts the triage **back** to the ticket — an internal note +
+tags (and the drafted reply for safe lanes); a held clinical/MDR case never gets a public reply on the
+way out either. Details: [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
 
 ## The eval harness — the centerpiece
 

@@ -105,4 +105,6 @@ def ingest_message(raw: dict, *, stage_mapping: dict[str, str] | None = None) ->
         order_ref=raw.get("order_ref"),
         journey_stage=journey,
         raw_text=masked_text,
+        platform=raw.get("platform"),
+        external_id=(str(raw["external_id"]) if raw.get("external_id") is not None else None),
     )

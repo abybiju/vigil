@@ -70,6 +70,12 @@ def test_clinical_webhook_is_held_and_pii_masked(tmp_path):
         assert "Jordan" not in row["raw_text"]
         assert "jordan.lee@example.com" not in (row["raw_text"] or "")
         assert "[ORDER_REF]" in row["raw_text"] or "[NAME]" in row["raw_text"]
+
+        # Outbound (dry-run by default): a held case posts a NOTE back, never a public reply.
+        outbound = body["outbound"]
+        assert outbound and all(a["status"] == "dry_run" for a in outbound)
+        assert [a["kind"] for a in outbound] == ["note"]
+        assert all(a["public"] is False for a in outbound)
     finally:
         _teardown()
 

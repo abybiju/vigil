@@ -46,6 +46,8 @@ class Message(BaseModel):
     order_ref: str | None = None
     journey_stage: JourneyStage = "unknown"
     raw_text: str  # PII already masked before this is stored or sent to a model
+    platform: str | None = None  # source system (gorgias|zendesk|shopify|email|generic)
+    external_id: str | None = None  # the platform's own ticket/order id, for posting back
 
 
 # --------------------------------------------------------------------------- #

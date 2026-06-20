@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import anthropic
 
-from . import db, respond
+from . import db, outbound, respond
 from .ingest import ingest_message
 from .pipeline import persist_case, process_message
 from .retrieve import Retriever
@@ -20,11 +20,14 @@ def ingest_and_process(
     client: anthropic.Anthropic,
     raw: dict,
     *,
+    platform: str | None = None,
     retriever: Retriever | None = None,
     stage_mapping: dict[str, str] | None = None,
     no_cache: bool = False,
 ) -> dict:
-    """Ingest one normalized message and run triage/clinical/route/respond. Returns a summary."""
+    """Ingest one normalized message, triage/route/respond, and post the result back. Returns a summary."""
+    if platform is not None:
+        raw = {**raw, "platform": platform}
     msg = ingest_message(raw, stage_mapping=stage_mapping)
 
     db.insert(
@@ -39,6 +42,8 @@ def ingest_and_process(
             "order_ref": msg.order_ref,
             "journey_stage": msg.journey_stage,
             "raw_text": msg.raw_text,  # already PII-masked
+            "platform": msg.platform,
+            "external_id": msg.external_id,
         },
     )
 
@@ -49,9 +54,11 @@ def ingest_and_process(
     )
 
     held = res.routing.routing_decision in ("clinical_review", "vigilance_review")
-    return {
+    summary = {
         "message_id": msg.id,
         "case_id": case_id,
+        "platform": msg.platform,
+        "external_id": msg.external_id,
         "channel": msg.channel,
         "journey_stage": msg.journey_stage,
         "masked_text": msg.raw_text,
@@ -65,3 +72,33 @@ def ingest_and_process(
         "reply": reply.body if reply else None,
         "reply_grounded": bool(reply.grounded) if reply else False,
     }
+
+    # Outbound: post the triage back to the source ticket (dry-run by default; human gate enforced).
+    summary["outbound"] = _post_back(conn, case_id, msg, summary, reply.body if reply else None)
+    return summary
+
+
+def _post_back(conn, case_id: str, msg, summary: dict, reply_body: str | None) -> list[dict]:
+    actions = outbound.plan_outbound(msg.platform or "", msg.external_id, summary, reply_body)
+    results = outbound.deliver(actions)
+    for r in results:
+        db.insert(
+            conn,
+            "outbound_log",
+            {
+                "id": db.new_id(),
+                "case_id": case_id,
+                "platform": r.get("platform"),
+                "external_id": r.get("external_id"),
+                "kind": r.get("kind"),
+                "public": bool(r.get("public")),
+                "status": r.get("status"),
+                "detail": r,
+                "created_at": db.now_iso(),
+            },
+            commit=False,
+        )
+    if results:
+        db.audit(conn, case_id, "ai", "outbound", {"actions": results})
+    conn.commit()
+    return results

@@ -98,4 +98,4 @@ async def ingest_webhook(
     if not (raw.get("raw_text") or "").strip():
         raise HTTPException(status_code=422, detail="could not extract message text from payload")
 
-    return ingest_and_process(conn, client, raw, retriever=retriever)
+    return ingest_and_process(conn, client, raw, platform=platform, retriever=retriever)

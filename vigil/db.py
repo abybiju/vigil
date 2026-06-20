@@ -46,12 +46,22 @@ def get_conn(db_path: str | Path | None = None) -> sqlite3.Connection:
     return conn
 
 
+def _ensure_columns(conn: sqlite3.Connection) -> None:
+    """Idempotently add columns introduced after a DB was first created (cheap migrations)."""
+    existing = {row[1] for row in conn.execute("PRAGMA table_info(messages)")}
+    for col, decl in (("platform", "TEXT"), ("external_id", "TEXT")):
+        if col not in existing:
+            conn.execute(f"ALTER TABLE messages ADD COLUMN {col} {decl}")
+    conn.commit()
+
+
 def init_db(db_path: str | Path | None = None) -> sqlite3.Connection:
-    """Create all tables from the migration. Idempotent (CREATE IF NOT EXISTS)."""
+    """Create all tables from the migration. Idempotent (CREATE IF NOT EXISTS + column ensure)."""
     sql = config.MIGRATION_PATH.read_text()
     conn = get_conn(db_path)
     conn.executescript(sql)
     conn.commit()
+    _ensure_columns(conn)
     return conn
 
 

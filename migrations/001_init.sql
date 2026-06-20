@@ -11,7 +11,9 @@ create table if not exists messages (
   customer_ref  text,                 -- masked / hashed
   order_ref     text,                 -- nullable
   journey_stage text,                 -- pre_kit | post_impression | preview_approved | in_treatment | post_treatment | unknown
-  raw_text      text not null
+  raw_text      text not null,
+  platform      text,                 -- gorgias | zendesk | shopify | email | generic (source system)
+  external_id   text                  -- the platform's own ticket/order id, for posting back
 );
 
 -- One triage decision per message.
@@ -100,6 +102,19 @@ create table if not exists model_cache (
   kind          text,                  -- triage | clinical_safety
   response_json text,
   created_at    text
+);
+
+-- Record of what Vigil posted back to the source platform (note / reply / tags).
+create table if not exists outbound_log (
+  id          text primary key,
+  case_id     text references cases(id),
+  platform    text,
+  external_id text,
+  kind        text,                    -- note | reply | tags
+  public      integer,                 -- 1 only for an actual public customer reply
+  status      text,                    -- dry_run | sent | skipped | error
+  detail      text,                    -- json
+  created_at  text
 );
 
 -- Grounded safe-lane reply drafts (one per message; only for non-clinical lanes).

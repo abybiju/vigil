@@ -73,6 +73,7 @@ def from_gorgias(p: dict) -> dict:
         "journey_stage": _stage(p),
         "received_at": _first(ticket.get("created_datetime"), msg.get("created_datetime")),
         "raw_text": text,
+        "external_id": ticket.get("id"),
     }
 
 
@@ -95,6 +96,7 @@ def from_zendesk(p: dict) -> dict:
         "journey_stage": _stage(p),
         "received_at": ticket.get("created_at"),
         "raw_text": text,
+        "external_id": ticket.get("id"),
     }
 
 
@@ -115,6 +117,7 @@ def from_shopify(p: dict) -> dict:
         "journey_stage": stage,
         "received_at": p.get("created_at"),
         "raw_text": text,
+        "external_id": p.get("id"),
     }
 
 
@@ -135,6 +138,7 @@ def from_email(p: dict) -> dict:
         "journey_stage": _stage(p),
         "received_at": p.get("date") or p.get("received_at"),
         "raw_text": text,
+        "external_id": p.get("message_id") or p.get("id"),
     }
 
 
@@ -148,6 +152,7 @@ def from_generic(p: dict) -> dict:
         "journey_stage": _stage(p),
         "received_at": p.get("received_at"),
         "raw_text": p.get("raw_text") or p.get("text") or p.get("message"),
+        "external_id": p.get("external_id") or p.get("id"),
     }
 
 
