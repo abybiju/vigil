@@ -1,0 +1,7 @@
+{
+  "from": "casey.rivera@example.com",
+  "subject": "billing + something else",
+  "text": "Quick billing question about my plan, oh and is some gum bleeding normal when I brush with the aligners in?",
+  "message_id": "<abc123@mail.example.com>",
+  "date": "2026-06-20T15:10:00Z"
+}

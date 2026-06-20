@@ -77,6 +77,25 @@ tests/            pure-function tests — router truth table, PII masking, rules
 app.py            Streamlit demo
 ```
 
+## Connecting a support stack (integrations)
+
+Vigil ingests through one platform-agnostic seam, so a helpdesk connector is a thin adapter — the
+triage/router/respond pipeline never changes. A FastAPI webhook service (`vigil/webhook.py`) accepts
+`POST /webhooks/{platform}` for **Gorgias · Zendesk · Shopify · email · generic**, runs the live
+pipeline, and writes the case to the same DB the dashboard reads.
+
+```bash
+make webhook    # uvicorn on :8000 (needs ANTHROPIC_API_KEY)
+curl -X POST localhost:8000/webhooks/gorgias -H 'Content-Type: application/json' \
+  --data @data/sample_webhooks/gorgias.json
+```
+
+Across the bundled samples the live pipeline routes a loose-tooth Gorgias ticket to `vigilance_review`
+(held), a Zendesk "where's my kit?" to a grounded `auto_send`, and — critically — an **email with a
+billing question that buries "is some gum bleeding normal?" to `clinical_review` (held)**. A
+clinical/MDR case is never auto-answered, whatever platform it arrives from. Details:
+[`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
+
 ## The eval harness — the centerpiece
 
 The labelling rubric ([`eval/rubric.md`](eval/rubric.md)) was written **before** any message or prompt,

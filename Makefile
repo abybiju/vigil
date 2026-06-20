@@ -22,6 +22,10 @@ eval-fresh:
 run:
 	uv run streamlit run app.py
 
+# Launch the webhook ingestion service (real-time intake; needs ANTHROPIC_API_KEY).
+webhook:
+	uv run uvicorn vigil.webhook:app --reload --port 8000
+
 # Unit tests (pure functions; no API calls).
 test:
 	uv run pytest

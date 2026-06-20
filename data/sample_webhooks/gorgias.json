@@ -1,0 +1,13 @@
+{
+  "ticket": {
+    "id": 88213,
+    "channel": "email",
+    "subject": "tooth feels loose",
+    "customer": { "id": 41122, "email": "jordan.lee@example.com" },
+    "created_datetime": "2026-06-20T15:04:00Z"
+  },
+  "message": {
+    "stripped_text": "Hi, I'm Jordan. One of my bottom front teeth feels loose after switching to step 6 and I'm worried. My order is SML-48213.",
+    "channel": "email"
+  }
+}

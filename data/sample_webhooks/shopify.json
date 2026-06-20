@@ -1,0 +1,8 @@
+{
+  "id": 820982911946154508,
+  "order_number": 1234,
+  "fulfillment_status": "fulfilled",
+  "note": "My aligners arrived with a crack in one of the trays, right out of the package.",
+  "customer": { "id": 207119551, "email": "alex.morgan@example.com" },
+  "created_at": "2026-06-20T15:08:00Z"
+}

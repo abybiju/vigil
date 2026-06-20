@@ -1,0 +1,10 @@
+{
+  "ticket": {
+    "id": 5567,
+    "via": { "channel": "email" },
+    "subject": "where is my kit",
+    "description": "Where is my impression kit? I ordered #100245 a week ago and the tracking hasn't updated.",
+    "requester": { "id": 9981, "email": "sam.taylor@example.com" },
+    "created_at": "2026-06-20T15:06:00Z"
+  }
+}
