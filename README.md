@@ -36,6 +36,11 @@ Local-first: clone-and-run with only an Anthropic API key. SQLite for storage, i
 retrieval — no external services and no model downloads on the default path. `make eval` caches every
 model output, so re-running the report is free; `make eval-fresh` forces fresh calls.
 
+**Deploy the demo:** the app reads from SQLite and makes no API calls at render time, so the hosted
+demo needs no key — it ships with a bundled read-only snapshot (`demo.db`). Deploy free on
+**Streamlit Community Cloud** (`app.py`, no secrets). Steps + alternatives in
+[`docs/DEPLOY.md`](docs/DEPLOY.md). _(Note: Vercel can't host Streamlit — see that doc.)_
+
 ## Architecture (the judgment calls)
 
 ```

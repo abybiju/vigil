@@ -18,9 +18,20 @@ from vigil.respond import get_reply
 st.set_page_config(page_title="Vigil", page_icon="🦷", layout="wide")
 
 
+DEMO_DB = config.ROOT / "demo.db"
+
+
 @st.cache_resource
 def _conn():
-    return db.init_db()
+    # Use the working DB if it has been seeded/evaluated; otherwise fall back to the bundled
+    # read-only demo snapshot so a fresh deploy works out-of-the-box with no API key or setup.
+    if config.DB_PATH.exists():
+        conn = db.init_db(config.DB_PATH)
+        if conn.execute("SELECT COUNT(*) FROM cases").fetchone()[0] > 0:
+            return conn
+    if DEMO_DB.exists():
+        return db.get_conn(DEMO_DB)
+    return db.init_db(config.DB_PATH)
 
 
 def load_cases(conn) -> pd.DataFrame:
