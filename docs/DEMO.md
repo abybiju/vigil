@@ -101,3 +101,90 @@ want, show `docs/INTEGRATIONS.md`.
 - Simulate button errors → it's a transient LLM hiccup; click it again (the pipeline retries) or pick
   a different preset. The dashboard's 97 pre-triaged cases + the Eval tab never need a live call.
 - Have the **Eval tab** and a pre-opened **held clinical case** ready as the always-works fallback.
+
+---
+
+# Problem-first walkthrough (the narrative version)
+
+The script above is a beat-by-beat reference. This is the *story* — start with the company's pain,
+make it a regulatory problem, reframe it as the insight, then show the solution. Words you can say,
+with **[SHOW]** cues.
+
+**Arc:** Problem (a company like Smileie) → why it's dangerous (FDA) → why no one covers it → the
+insight → what Vigil does → prove it (eval) → show it live → how it connects → close.
+
+## 1. Open on the company's reality — make it concrete (45s)
+*[SHOW: the dashboard title]*
+
+> "Take a brand like **Smileie** — direct-to-consumer clear aligners, sold through Shopify, support
+> run through a helpdesk like Gorgias or Zendesk. They get a flood of support messages: 'my tray
+> cracked,' 'my tooth feels loose,' 'where's my kit.' Like every DTC brand, they lean on bots and
+> macros to **deflect** as many as possible — that's how support is measured.
+>
+> Here's the problem hiding in that inbox: **a clear aligner is an FDA Class II medical device.** Under
+> FDA rules, a lot of those messages aren't support tickets — they're legally **complaints**, and some
+> are **adverse events**. 'My tooth feels loose,' 'my gum is bleeding,' 'I think I'm having a reaction'
+> — those are reportable safety signals. The instinct to *deflect and auto-answer* is exactly the
+> wrong move, and it's a regulatory landmine."
+
+## 2. Raise the stakes — why it's dangerous (30s)
+
+> "Under 21 CFR 820.3(b), a complaint is any message alleging a device deficiency — fit, performance,
+> safety. Manufacturers have to capture and evaluate those, and report serious injuries or
+> malfunctions to the FDA within 30 days under Part 803. Miss them and you get 483s and warning
+> letters. So a Shopify-native brand has the **identical obligation as a big medical-device company**
+> — but none of the infrastructure. The incumbents don't cover this seam: support bots optimize for
+> deflection, and the pharmacovigilance tools — Oracle Argus, IQVIA — assume you already have a safety
+> department and a six-figure budget."
+
+## 3. The insight + what Vigil is (30s)
+
+> "So the reframe is simple but it changes everything: **your support inbox is, in FDA terms, a stream
+> of Class II device complaints.** Vigil sits on that inbox and does two things a helpdesk never will:
+> it turns each message into a **structured, review-ready complaint record**, and it makes a **safe
+> routing decision** — where a clinical-safety case is **held for a human and never auto-answered.**
+> It's a **detection and triage aid with a human gate** — it flags and structures; a human decides
+> reportability. It never makes the FDA call itself."
+
+## 4. Prove the claim before showing the UI (45s)
+*[SHOW: **Eval tab**]*
+
+> "Before I show you the product, here's why you can trust it. The whole thing lives or dies on one
+> number — **did we ever auto-answer a clinical case?** *[point]* Zero. And the clinical-red-flag
+> detector caught about **100%** of them — here's the list of dangerous misses, and it's **empty.**
+> That's across ~100 messages including a hand-written adversarial set — buried red flags, sarcasm,
+> downplayed harm. I track recall, not accuracy, because one missed safety signal is *the* failure mode."
+
+## 5. Show it living — the moment that lands (90s)
+*[SHOW: sidebar → **Simulate an inbound ticket**]*
+
+> "Let me show you a ticket coming in. *[pick 'Clinical — loose tooth', click Triage it]* This mimics
+> a Gorgias webhook — the same pipeline a real ticket hits."
+
+*[It pops to the top of the Inbox, held. Open it in Case detail.]*
+
+> "Vigil flagged it as a complaint, serious, an MDR candidate — and **held it for clinical review.**
+> No auto-reply. It drafted the structured complaint record and a MedWatch-style draft for the human.
+> *[switch presets]* Now a shipping question — *[Triage it]* — totally different: not a complaint, so
+> it gets a **grounded reply citing the FAQ.** And the kicker —" *[pick the buried-red-flag preset]* "a
+> billing question that buries 'is some gum bleeding normal?' — still **held.** A keyword filter misses
+> that. The clinical-safety pass doesn't."
+
+## 6. Handle "how does it connect to our system?" (30s)
+
+> "Connecting is a **2-minute settings change on your side, no code.** Your helpdesk already fires a
+> webhook on every new ticket — you point it at Vigil's URL. We verify the signature, triage it, and
+> post the assessment **back onto the ticket** as a note and tags, right where your agents already
+> work. The button I just clicked runs that exact pipeline."
+
+## 7. Close — honest and confident (20s)
+
+> "The capability is mature in life sciences; the **segment** isn't served — a Shopify-native brand
+> with no safety team. The edge is go-to-market, not secret tech, and I'd validate buyer demand with
+> real conversations before betting a company on it. But the hard technical claim — **a clinical case
+> never gets auto-answered** — isn't asserted. It's proven, and you just watched it."
+
+### Three things that make this land
+- **Name Smileie specifically** and use *their* words ("my tooth feels loose") — concrete, not abstract.
+- **Lead with the problem and the FDA stakes** before the demo — the demo means nothing until they feel the risk.
+- **Show the eval *before* the UI.** Anyone can build a UI; the eval says "I'm an engineer who proves things."
