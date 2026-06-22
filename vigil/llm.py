@@ -82,6 +82,15 @@ def schema_for(model: type[BaseModel]) -> dict:
     return _clean(_inline_refs(body, defs))
 
 
+def _strip_additional_properties(node: Any) -> Any:
+    """Drop additionalProperties:false (server-side validators reject extra keys; Pydantic ignores them)."""
+    if isinstance(node, dict):
+        return {k: _strip_additional_properties(v) for k, v in node.items() if k != "additionalProperties"}
+    if isinstance(node, list):
+        return [_strip_additional_properties(x) for x in node]
+    return node
+
+
 def structured_call(
     client,
     *,
@@ -200,32 +209,51 @@ def _openai_structured_call(
     temperature: float,
     max_retries: int,
 ) -> T:
-    """OpenAI-compatible function calling: force one tool call, validate, retry on error."""
-    import json
+    """OpenAI-compatible function calling: force one tool call, validate, retry on error.
 
+    Robust to weaker open models on shared endpoints (Groq etc.): the provider validates tool
+    args server-side and 400s if they don't match the schema, and a model may emit no tool call
+    at all. Both are retried (with a temperature nudge so the retry differs), and the schema sent
+    to the provider drops `additionalProperties:false` (Pydantic ignores extra keys anyway), which
+    is the most common cause of those server-side rejections.
+    """
     tool = {
         "type": "function",
         "function": {
             "name": tool_name,
             "description": f"Return a {schema_model.__name__} object.",
-            "parameters": schema_for(schema_model),
+            "parameters": _strip_additional_properties(schema_for(schema_model)),
         },
     }
     messages: list[dict] = [{"role": "system", "content": system}, {"role": "user", "content": user}]
     attempts_left = max_retries
+    tool_call_attempts = max_retries + 2  # extra tries if the provider rejects/omits the tool call
+    temp = temperature
 
     while True:
-        resp = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            tools=[tool],
-            tool_choice={"type": "function", "function": {"name": tool_name}},
-            temperature=temperature,
-            max_tokens=max_tokens,
-        )
+        try:
+            resp = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                tools=[tool],
+                tool_choice={"type": "function", "function": {"name": tool_name}},
+                temperature=temp,
+                max_tokens=max_tokens,
+            )
+        except Exception as e:
+            retryable = any(k in str(e).lower() for k in ("tool_use_failed", "did not match schema", "tool call validation"))
+            if retryable and tool_call_attempts > 1:
+                tool_call_attempts -= 1
+                temp = max(temp, 0.4)  # vary the output so a deterministic-ish retry can differ
+                continue
+            raise
         message = resp.choices[0].message
         calls = getattr(message, "tool_calls", None) or []
         if not calls:
+            if tool_call_attempts > 1:
+                tool_call_attempts -= 1
+                temp = max(temp, 0.4)
+                continue
             raise RuntimeError(f"Model did not call tool '{tool_name}'.")
         args = calls[0].function.arguments
 
