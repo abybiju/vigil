@@ -83,9 +83,10 @@ def _render_simulator(conn) -> None:
     """In-app 'send a ticket' panel so the connector can be demoed with no terminal/curl/tunnel."""
     with st.sidebar.expander("📨 Simulate an inbound ticket", expanded=False):
         st.caption("Mimics a Gorgias/Zendesk/Shopify webhook — runs the real triage pipeline.")
-        if not config.ANTHROPIC_API_KEY:
-            st.info("Live triage needs `ANTHROPIC_API_KEY` (run locally with `make run`, or add it as a "
-                    "Streamlit secret). This hosted demo is read-only.", icon="🔑")
+        if not config.has_api_key():
+            st.info("Live triage needs an LLM key — Anthropic, or a free provider like Groq "
+                    "(`VIGIL_LLM_PROVIDER=openai` + `GROQ_API_KEY`). Add it under Settings → Secrets, "
+                    "or run locally with `make run`. This hosted demo is read-only.", icon="🔑")
             return
 
         platform = st.selectbox("Source platform", ["gorgias", "zendesk", "shopify", "email"], key="sim_platform")

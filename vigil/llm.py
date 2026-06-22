@@ -26,7 +26,17 @@ _DROP_KEYS = {
 }
 
 
-def get_client() -> anthropic.Anthropic:
+def get_client():
+    """Return an Anthropic client, or an OpenAI client pointed at any OpenAI-compatible endpoint."""
+    if config.LLM_PROVIDER == "openai":
+        from openai import OpenAI
+
+        return OpenAI(
+            base_url=config.LLM_BASE_URL,
+            api_key=config.require_api_key(),
+            timeout=config.REQUEST_TIMEOUT,
+            max_retries=config.MAX_RETRIES,
+        )
     # Bounded timeout + retries so a stalled socket can never hang the eval indefinitely.
     return anthropic.Anthropic(
         api_key=config.require_api_key(),
@@ -73,7 +83,7 @@ def schema_for(model: type[BaseModel]) -> dict:
 
 
 def structured_call(
-    client: anthropic.Anthropic,
+    client,
     *,
     model: str,
     system: str,
@@ -84,10 +94,36 @@ def structured_call(
     temperature: float | None = None,
     max_retries: int = 1,
 ) -> T:
-    """Force a single tool call and return a validated `schema_model` instance."""
+    """Force a single tool call and return a validated `schema_model` instance.
+
+    Dispatches on the configured provider: Anthropic native (strict) tool use, or an
+    OpenAI-compatible function call (Groq/Moonshot/Gemini/DeepSeek/OpenRouter/…).
+    """
     if temperature is None:
         temperature = config.TEMPERATURE
+    if config.LLM_PROVIDER == "openai":
+        return _openai_structured_call(
+            client, model=model, system=system, user=user, schema_model=schema_model,
+            tool_name=tool_name, max_tokens=max_tokens, temperature=temperature, max_retries=max_retries,
+        )
+    return _anthropic_structured_call(
+        client, model=model, system=system, user=user, schema_model=schema_model,
+        tool_name=tool_name, max_tokens=max_tokens, temperature=temperature, max_retries=max_retries,
+    )
 
+
+def _anthropic_structured_call(
+    client,
+    *,
+    model: str,
+    system: str,
+    user: str,
+    schema_model: type[T],
+    tool_name: str,
+    max_tokens: int,
+    temperature: float,
+    max_retries: int,
+) -> T:
     schema = schema_for(schema_model)
     messages: list[dict] = [{"role": "user", "content": user}]
     use_strict = True
@@ -150,3 +186,66 @@ def structured_call(
             ]
 
     raise last_err or RuntimeError("structured_call failed")  # pragma: no cover
+
+
+def _openai_structured_call(
+    client,
+    *,
+    model: str,
+    system: str,
+    user: str,
+    schema_model: type[T],
+    tool_name: str,
+    max_tokens: int,
+    temperature: float,
+    max_retries: int,
+) -> T:
+    """OpenAI-compatible function calling: force one tool call, validate, retry on error."""
+    import json
+
+    tool = {
+        "type": "function",
+        "function": {
+            "name": tool_name,
+            "description": f"Return a {schema_model.__name__} object.",
+            "parameters": schema_for(schema_model),
+        },
+    }
+    messages: list[dict] = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    attempts_left = max_retries
+
+    while True:
+        resp = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            tools=[tool],
+            tool_choice={"type": "function", "function": {"name": tool_name}},
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
+        message = resp.choices[0].message
+        calls = getattr(message, "tool_calls", None) or []
+        if not calls:
+            raise RuntimeError(f"Model did not call tool '{tool_name}'.")
+        args = calls[0].function.arguments
+
+        try:
+            return schema_model.model_validate_json(args)
+        except ValidationError as e:
+            if attempts_left <= 0:
+                raise
+            attempts_left -= 1
+            messages += [
+                {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {"id": calls[0].id, "type": "function", "function": {"name": tool_name, "arguments": args}}
+                    ],
+                },
+                {
+                    "role": "tool",
+                    "tool_call_id": calls[0].id,
+                    "content": f"Your arguments failed validation:\n{e}\nReturn corrected arguments that match the schema.",
+                },
+            ]
