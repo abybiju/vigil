@@ -7,9 +7,19 @@ Four tabs: Inbox · Case detail · Dashboard · Eval.
 from __future__ import annotations
 
 import json
+import os
 
 import pandas as pd
 import streamlit as st
+
+# Bridge Streamlit secrets -> env BEFORE importing config, so a hosted deploy can enable live
+# triage by adding ANTHROPIC_API_KEY (and friends) under Settings → Secrets. No-op locally.
+try:
+    for _k, _v in st.secrets.items():
+        if isinstance(_v, str):
+            os.environ.setdefault(_k, _v)
+except Exception:
+    pass
 
 from vigil import config, db, ui
 from vigil.evaluate import compute_metrics, load_results_frame
