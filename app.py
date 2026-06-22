@@ -30,7 +30,7 @@ def _conn():
         if conn.execute("SELECT COUNT(*) FROM cases").fetchone()[0] > 0:
             return conn
     if DEMO_DB.exists():
-        return db.get_conn(DEMO_DB)
+        return db.init_db(DEMO_DB)  # init_db ensures the schema/columns match the current code
     return db.init_db(config.DB_PATH)
 
 
@@ -40,15 +40,19 @@ def load_cases(conn) -> pd.DataFrame:
         SELECT c.id AS case_id, c.message_id, c.intent_category, c.is_complaint, c.complaint_basis,
                c.clinical_red_flag, c.severity, c.potential_mdr, c.mdr_rationale,
                c.conf_complaint, c.conf_clinical, c.conf_mdr, c.routing_decision, c.routing_reason,
-               m.raw_text, m.journey_stage, m.source
+               c.created_at, m.raw_text, m.journey_stage, m.source, m.platform, m.external_id
         FROM cases c JOIN messages m ON m.id = c.message_id
-        ORDER BY c.clinical_red_flag DESC, c.potential_mdr DESC, c.is_complaint DESC
+        ORDER BY (m.platform IS NOT NULL) DESC, c.created_at DESC,
+                 c.clinical_red_flag DESC, c.potential_mdr DESC, c.is_complaint DESC
         """
     ).fetchall()
     df = pd.DataFrame([dict(r) for r in rows])
     if not df.empty:
         for col in ["is_complaint", "clinical_red_flag", "potential_mdr"]:
             df[col] = df[col].astype(bool)
+        if "platform" not in df.columns:  # older DB without the columns
+            df["platform"] = None
+            df["external_id"] = None
     return df
 
 
@@ -80,7 +84,14 @@ if cases.empty:
 
 # Sidebar case selector — the single selection control, shared across tabs.
 options = cases["message_id"].tolist()
-labels = {r.message_id: f"{r.message_id} · {_snippet(r.raw_text, 48)}" for r in cases.itertuples()}
+
+
+def _picker_label(r) -> str:
+    tag = f"🔌 {r.platform} #{r.external_id}" if getattr(r, "platform", None) else r.message_id
+    return f"{tag} · {_snippet(r.raw_text, 44)}"
+
+
+labels = {r.message_id: _picker_label(r) for r in cases.itertuples()}
 selected_id = st.sidebar.selectbox(
     "Open a case", options, format_func=lambda mid: labels.get(mid, mid), key="selected_case"
 )
@@ -102,9 +113,15 @@ with tab_inbox:
     )
     view = cases[cases["routing_decision"].isin(lanes)]
 
+    def _source(row) -> str:
+        if row.get("platform"):
+            ext = f" #{row['external_id']}" if row.get("external_id") else ""
+            return f"🔌 {row['platform']}{ext}"
+        return "sample"
+
     table = pd.DataFrame(
         {
-            "id": view["message_id"],
+            "source": [_source(r) for _, r in view.iterrows()],
             "lane": view["routing_decision"].map(ui.LANE_LABELS),
             "complaint": view["is_complaint"].map({True: "●", False: ""}),
             "clinical": view["clinical_red_flag"].map({True: "🚩", False: ""}),
@@ -114,7 +131,7 @@ with tab_inbox:
         }
     )
     st.dataframe(table, hide_index=True, width="stretch", height=460)
-    st.caption(f"{len(view)} of {len(cases)} cases shown.")
+    st.caption(f"{len(view)} of {len(cases)} cases shown. Live webhook tickets (🔌) sort to the top.")
 
 # --------------------------------------------------------------------------- #
 # Case detail
