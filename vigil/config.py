@@ -21,9 +21,10 @@ def _get(name: str, default: str) -> str:
 # anthropic (default — native strict tool use; what the eval proof was run on) OR
 # openai (any OpenAI-compatible endpoint: Groq, Moonshot, Gemini, DeepSeek, OpenRouter, …)
 LLM_PROVIDER = _get("VIGIL_LLM_PROVIDER", "anthropic").lower()
-# Defaults point at Groq's free tier hosting Moonshot's Kimi K2 (OpenAI-compatible tool calling).
+# Defaults point at Groq's free tier (OpenAI-compatible tool calling). gpt-oss-120b is a strong,
+# always-available free model; verified handling Vigil's structured schemas + the clinical gate.
 LLM_BASE_URL = _get("VIGIL_LLM_BASE_URL", "https://api.groq.com/openai/v1")
-LLM_MODEL = _get("VIGIL_LLM_MODEL", "moonshotai/kimi-k2-instruct-0905")
+LLM_MODEL = _get("VIGIL_LLM_MODEL", "openai/gpt-oss-120b")
 LLM_API_KEY = os.environ.get("VIGIL_LLM_API_KEY") or os.environ.get("GROQ_API_KEY")
 
 # --- Models ---
